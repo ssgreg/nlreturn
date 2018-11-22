@@ -1,5 +1,9 @@
 # nlreturn
 
+[![Build Status](https://travis-ci.org/ssgreg/nlreturn.svg?branch=master)](https://travis-ci.org/ssgreg/nlreturn)
+[![Go Report Status](https://goreportcard.com/badge/github.com/ssgreg/nlreturn)](https://goreportcard.com/report/github.com/ssgreg/nlreturn)
+[![Coverage Status](https://coveralls.io/repos/github/ssgreg/nlreturn/badge.svg?branch=master&service=github)](https://coveralls.io/github/ssgreg/nlreturn?branch=master)
+
 Linter requires a new line before return and branch statements to increase code clarity, except when the return is alone inside a statement group (such as an if statement).
 
 # Example

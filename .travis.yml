@@ -1,0 +1,23 @@
+language: go
+
+go:
+  - 1.11.1
+
+before_install:
+  - go get -v github.com/golang/lint/golint
+
+install:
+  - go install -race -v std
+  - go get -race -t -v ./...
+  - go install -race -v ./...
+  - go get golang.org/x/tools/cmd/cover
+  - go get github.com/mattn/goveralls
+
+script:
+  - go vet ./...
+  - $HOME/gopath/bin/golint .
+  - go test -cpu=2 -race -v ./...
+  - go test -v -covermode=count -coverprofile=coverage.out ./...
+
+after_success:
+  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci

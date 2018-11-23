@@ -135,7 +135,7 @@ func checkNode(logger *logf.Logger, w io.Writer, node ast.Node, prevNode ast.Nod
 		prevEnd := fset.Position(prevNode.End()).Line
 
 		if pos-prevEnd > 1 {
-			return true
+			return false
 		}
 
 		printErrorMessage(w, node, fset)

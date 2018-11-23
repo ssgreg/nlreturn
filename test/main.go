@@ -32,12 +32,12 @@ func baz() {
 
 func foo() int {
 	v := []int{}
-	for _ = range v {
+	for range v {
 		return 0
 	}
 
-	for _ = range v {
-		for _ = range v {
+	for range v {
+		for range v {
 			return 0
 		}
 		return 0

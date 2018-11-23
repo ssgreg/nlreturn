@@ -23,7 +23,7 @@ func main() {
 	flag.Parse()
 
 	writer, writerClose := logf.NewChannelWriter(logf.ChannelWriterConfig{
-		Appender: logftext.NewAppender(os.Stdout, logftext.EncoderConfig{}),
+		Appender: logftext.NewAppender(os.Stderr, logftext.EncoderConfig{}),
 	})
 	defer writerClose()
 

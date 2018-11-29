@@ -56,6 +56,7 @@ func bar() int {
 		if o == 0 {
 			return 1
 		}
+		return 0
 	}
 
 	return o

@@ -84,64 +84,82 @@ func handleFile(logger *logf.Logger, w io.Writer, file *ast.File, fset *token.Fi
 	logger = logger.WithName("file").With(logf.String("file", path.Base(fset.Position(file.Pos()).Filename)))
 	logger.Debug("handle file")
 
+	confirmedReturns := []int{}
+	linesWithBlockEnd := []int{}
+
 	ast.Inspect(file, func(node ast.Node) bool {
 		if node != nil {
 			defer func() {
 				prevNode = node
 			}()
+			nodeLogger := logger.WithName("node").With(
+				logf.String("type", fmt.Sprintf("%T", node)),
+				logf.Int("pos", fset.Position(node.Pos()).Line),
+				logf.Int("pos", fset.Position(node.End()).Line),
+			)
+			nodeLogger.Debug("got node")
 
-			return checkNode(logger, w, node, prevNode, fset)
+			switch c := node.(type) {
+			case *ast.CaseClause:
+				if len(c.Body) > 0 {
+					switch c.Body[0].(type) {
+					case *ast.BranchStmt, *ast.ReturnStmt:
+						confirmedReturns = append(confirmedReturns, fset.Position(c.Body[0].Pos()).Line)
+
+						return true
+					}
+				}
+
+			case *ast.CommClause:
+				if len(c.Body) > 0 {
+					switch c.Body[0].(type) {
+					case *ast.BranchStmt, *ast.ReturnStmt:
+						confirmedReturns = append(confirmedReturns, fset.Position(c.Body[0].Pos()).Line)
+
+						return true
+					}
+				}
+
+			case *ast.BlockStmt:
+				linesWithBlockEnd = append(linesWithBlockEnd, fset.Position(node.End()).Line)
+
+				if len(c.List) > 0 {
+					switch c.List[0].(type) {
+					case *ast.BranchStmt, *ast.ReturnStmt:
+						confirmedReturns = append(confirmedReturns, fset.Position(c.List[0].Pos()).Line)
+
+						return true
+					}
+				}
+			case *ast.BranchStmt, *ast.ReturnStmt:
+				for _, confirmedReturn := range confirmedReturns {
+					if confirmedReturn == fset.Position(node.Pos()).Line {
+						return true
+					}
+				}
+
+				pos := fset.Position(node.Pos()).Line
+				prevEnd := fset.Position(prevNode.End()).Line
+
+				if pos-prevEnd > 1 {
+					// Check if line before return is occupied by ending curly bracket.
+					found := false
+					for _, blockEnd := range linesWithBlockEnd {
+						if pos-1 == blockEnd {
+							found = true
+						}
+					}
+					if !found {
+						return true
+					}
+				}
+
+				printErrorMessage(w, node, fset)
+			}
 		}
 
-		return false
+		return true
 	})
-}
-
-func checkNode(logger *logf.Logger, w io.Writer, node ast.Node, prevNode ast.Node, fset *token.FileSet) bool {
-	logger = logger.WithName("node").With(
-		logf.String("type", fmt.Sprintf("%T", node)),
-		logf.Int("pos", fset.Position(node.Pos()).Line),
-		logf.Int("pos", fset.Position(node.End()).Line),
-	)
-	logger.Debug("got node")
-
-	switch c := node.(type) {
-	case *ast.CaseClause:
-		if len(c.Body) > 0 {
-			switch c.Body[0].(type) {
-			case *ast.BranchStmt, *ast.ReturnStmt:
-				return false
-			}
-		}
-
-	case *ast.CommClause:
-		if len(c.Body) > 0 {
-			switch c.Body[0].(type) {
-			case *ast.BranchStmt, *ast.ReturnStmt:
-				return false
-			}
-		}
-
-	case *ast.BlockStmt:
-		if len(c.List) > 0 {
-			switch c.List[0].(type) {
-			case *ast.BranchStmt, *ast.ReturnStmt:
-				return false
-			}
-		}
-
-	case *ast.BranchStmt, *ast.ReturnStmt:
-		pos := fset.Position(node.Pos()).Line
-		prevEnd := fset.Position(prevNode.End()).Line
-
-		if pos-prevEnd > 1 {
-			return false
-		}
-
-		printErrorMessage(w, node, fset)
-	}
-
-	return true
 }
 
 func printErrorMessage(w io.Writer, node ast.Node, fset *token.FileSet) {

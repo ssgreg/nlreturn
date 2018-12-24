@@ -122,6 +122,7 @@ func handleFile(logger *logf.Logger, w io.Writer, file *ast.File, fset *token.Fi
 
 			case *ast.BlockStmt:
 				linesWithBlockEnd = append(linesWithBlockEnd, fset.Position(node.End()).Line)
+				logger.Debug("update line with block ends", logf.Ints("block-ends", linesWithBlockEnd))
 
 				if len(c.List) > 0 {
 					switch c.List[0].(type) {
@@ -131,6 +132,11 @@ func handleFile(logger *logf.Logger, w io.Writer, file *ast.File, fset *token.Fi
 						return true
 					}
 				}
+
+			case *ast.AssignStmt, *ast.CallExpr, *ast.DeferStmt, *ast.ExprStmt, *ast.GoStmt:
+				linesWithBlockEnd = append(linesWithBlockEnd, fset.Position(node.End()).Line)
+				logger.Debug("update line with block ends", logf.Ints("block-ends", linesWithBlockEnd))
+
 			case *ast.BranchStmt, *ast.ReturnStmt:
 				for _, confirmedReturn := range confirmedReturns {
 					if confirmedReturn == fset.Position(node.Pos()).Line {

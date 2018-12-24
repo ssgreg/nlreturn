@@ -65,3 +65,77 @@ func bar() int {
 func main() {
 	return
 }
+
+func bugNoAssignSmthHandling() string {
+	switch 0 {
+	case 0:
+		o := struct {
+			foo string
+		}{
+			"foo",
+		}
+		return o.foo
+
+	case 1:
+		o := struct {
+			foo string
+		}{
+			"foo",
+		}
+
+		return o.foo
+	}
+
+	return ""
+}
+
+func bugNoExprSmthHandling(string) {
+	switch 0 {
+	case 0:
+		bugNoExprSmthHandling(
+			"",
+		)
+		return
+
+	case 1:
+		bugNoExprSmthHandling(
+			"",
+		)
+
+		return
+	}
+}
+
+func bugNoDeferSmthHandling(string) {
+	switch 0 {
+	case 0:
+		defer bugNoDeferSmthHandling(
+			"",
+		)
+		return
+
+	case 1:
+		defer bugNoDeferSmthHandling(
+			"",
+		)
+
+		return
+	}
+}
+
+func bugNoGoSmthHandling(string) {
+	switch 0 {
+	case 0:
+		go bugNoGoSmthHandling(
+			"",
+		)
+		return
+
+	case 1:
+		go bugNoGoSmthHandling(
+			"",
+		)
+
+		return
+	}
+}

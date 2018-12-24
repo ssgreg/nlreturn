@@ -15,6 +15,10 @@ var golden = []string{
 	"test/main.go:27:3: break with no blank line before\n",
 	"test/main.go:43:3: return with no blank line before\n",
 	"test/main.go:59:3: return with no blank line before\n",
+	"test/main.go:77:3: return with no blank line before\n",
+	"test/main.go:98:3: return with no blank line before\n",
+	"test/main.go:115:3: return with no blank line before\n",
+	"test/main.go:132:3: return with no blank line before\n",
 }
 
 type TestWriter struct {

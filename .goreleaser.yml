@@ -24,3 +24,11 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+
+dockers:
+  - dockerfile: build/Dockerfile
+    binaries:
+      - nlreturn
+    image_templates:
+      - "ssgreg/nlreturn:latest"
+      - "ssgreg/nlreturn:{{ .Tag }}"

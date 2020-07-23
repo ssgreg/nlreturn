@@ -3,6 +3,7 @@ project_name: nlreturn
 
 builds:
   - binary: nlreturn
+    main: ./cmd/nlreturn/
     goos:
       - darwin
       - windows

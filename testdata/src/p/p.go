@@ -3,15 +3,34 @@ package main
 func cha() {
 	ch := make(chan interface{})
 	ch1 := make(chan interface{})
+	ch2 := make(chan interface{})
 
 	select {
 	case <-ch:
 		return
 
 	case <-ch1:
-		a := 1
-		_ = a
+		{
+			a := 1
+			_ = a
+			{
+				a := 1
+				_ = a
+				return // want "return with no blank line before"
+			}
+
+			return
+		}
+
 		return
+
+	case <-ch2:
+		{
+			a := 1
+			_ = a
+			return // want "return with no blank line before"
+		}
+		return // want "return with no blank line before"
 	}
 }
 
@@ -20,11 +39,11 @@ func baz() {
 	case 0:
 		a := 1
 		_ = a
-		fallthrough
+		fallthrough // want "fallthrough with no blank line before"
 	case 1:
 		a := 1
 		_ = a
-		break
+		break // want "break with no blank line before"
 	case 2:
 		break
 	}
@@ -40,7 +59,7 @@ func foo() int {
 		for range v {
 			return 0
 		}
-		return 0
+		return 0 // want "return with no blank line before"
 	}
 
 	o := []int{
@@ -56,7 +75,7 @@ func bar() int {
 		if o == 0 {
 			return 1
 		}
-		return 0
+		return 0 // want "return with no blank line before"
 	}
 
 	return o
@@ -74,7 +93,7 @@ func bugNoAssignSmthHandling() string {
 		}{
 			"foo",
 		}
-		return o.foo
+		return o.foo // want "return with no blank line before"
 
 	case 1:
 		o := struct {
@@ -95,7 +114,7 @@ func bugNoExprSmthHandling(string) {
 		bugNoExprSmthHandling(
 			"",
 		)
-		return
+		return // want "return with no blank line before"
 
 	case 1:
 		bugNoExprSmthHandling(
@@ -112,7 +131,7 @@ func bugNoDeferSmthHandling(string) {
 		defer bugNoDeferSmthHandling(
 			"",
 		)
-		return
+		return // want "return with no blank line before"
 
 	case 1:
 		defer bugNoDeferSmthHandling(
@@ -129,7 +148,7 @@ func bugNoGoSmthHandling(string) {
 		go bugNoGoSmthHandling(
 			"",
 		)
-		return
+		return // want "return with no blank line before"
 
 	case 1:
 		go bugNoGoSmthHandling(

@@ -1,4 +1,4 @@
-package analyzer
+package nlreturn
 
 import (
 	"go/ast"

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ssgreg/nlreturn/pkg/nlreturn"
+	"github.com/ssgreg/nlreturn/v2/pkg/nlreturn"
 	"golang.org/x/tools/go/analysis/singlechecker"
 )
 

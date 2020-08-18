@@ -1,6 +1,7 @@
 package nlreturn
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
 
@@ -49,7 +50,21 @@ func inspectBlock(pass *analysis.Pass, block []ast.Stmt) {
 			}
 
 			if line(pass, stmt.Pos())-line(pass, block[i-1].End()) <= 1 {
-				pass.Reportf(stmt.Pos(), "%s with no blank line before", name(stmt))
+				pass.Report(analysis.Diagnostic{
+					Pos:     stmt.Pos(),
+					Message: fmt.Sprintf("%s with no blank line before", name(stmt)),
+					SuggestedFixes: []analysis.SuggestedFix{
+						{
+							TextEdits: []analysis.TextEdit{
+								{
+									Pos:     stmt.Pos(),
+									NewText: []byte("\n"),
+									End:     stmt.Pos(),
+								},
+							},
+						},
+					},
+				})
 			}
 		}
 	}

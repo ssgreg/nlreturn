@@ -1,5 +1,10 @@
 package main
 
+import "C"
+import (
+	"unsafe"
+)
+
 func cha() {
 	ch := make(chan interface{})
 	ch1 := make(chan interface{})
@@ -157,4 +162,16 @@ func bugNoGoSmthHandling(string) {
 
 		return
 	}
+}
+
+func bugCgo() []byte {
+	ch := make(chan interface{})
+	if ch != nil {
+		return nil
+	}
+	return C.GoBytes(unsafe.Pointer(C.CString("")), C.int(1)) // want "return with no blank line before"
+}
+
+func bugCgo2() []byte {
+	return C.GoBytes(unsafe.Pointer(C.CString("")), C.int(1))
 }

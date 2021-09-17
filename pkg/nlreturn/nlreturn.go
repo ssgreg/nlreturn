@@ -50,11 +50,11 @@ func run(pass *analysis.Pass) (interface{}, error) {
 }
 
 func inspectBlock(pass *analysis.Pass, block []ast.Stmt) {
-
 	for i, stmt := range block {
 		switch stmt.(type) {
 		case *ast.BranchStmt, *ast.ReturnStmt:
-			if line(pass, stmt.Pos())-line(pass, block[0].Pos()) < blockSize {
+
+			if i == 0 || line(pass, stmt.Pos())-line(pass, block[0].Pos()) < blockSize {
 				return
 			}
 

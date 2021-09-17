@@ -48,3 +48,7 @@ func bar() int {
     return a
 }
 ```
+
+# Args
+
+* `-block-size n` size of the block (including return statement that is still "OK") so no return split required.

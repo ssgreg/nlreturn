@@ -1,6 +1,6 @@
 # nlreturn
 
-[![Build Status](https://travis-ci.org/ssgreg/nlreturn.svg?branch=master)](https://travis-ci.org/ssgreg/nlreturn)
+[![build status](https://github.com/ssgreg/nlreturn/actions/workflows/main.yaml/badge.svg?branch=master)]()
 [![Go Report Status](https://goreportcard.com/badge/github.com/ssgreg/nlreturn)](https://goreportcard.com/report/github.com/ssgreg/nlreturn)
 [![Coverage Status](https://coveralls.io/repos/github/ssgreg/nlreturn/badge.svg?branch=master&service=github)](https://coveralls.io/github/ssgreg/nlreturn?branch=master)
 

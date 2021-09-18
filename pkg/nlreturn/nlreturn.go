@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"strings"
 
 	"golang.org/x/tools/go/analysis"
 )
@@ -58,6 +59,14 @@ func inspectBlock(pass *analysis.Pass, block []ast.Stmt) {
 				return
 			}
 
+			if !strings.HasSuffix(pass.Fset.Position(stmt.Pos()).Filename, ".go") {
+				return
+			}
+
+			if isFalsePositive(stmt) {
+				return
+			}
+
 			if line(pass, stmt.Pos())-line(pass, block[i-1].End()) <= 1 {
 				pass.Report(analysis.Diagnostic{
 					Pos:     stmt.Pos(),
@@ -92,4 +101,31 @@ func name(stmt ast.Stmt) string {
 
 func line(pass *analysis.Pass, pos token.Pos) int {
 	return pass.Fset.Position(pos).Line
+}
+
+func isFalsePositive(node ast.Node) bool {
+	r, ok := node.(*ast.ReturnStmt)
+	if !ok {
+		return false
+	}
+
+	if len(r.Results) != 1 {
+		return false
+	}
+
+	call, ok := r.Results[0].(*ast.CallExpr)
+	if !ok {
+		return false
+	}
+
+	fun, ok := call.Fun.(*ast.Ident)
+	if !ok {
+		return false
+	}
+
+	if fun.Name == "_Cfunc_GoBytes" {
+		return true
+	}
+
+	return false
 }
